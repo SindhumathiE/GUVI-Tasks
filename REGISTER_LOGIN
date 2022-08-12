@@ -1,0 +1,117 @@
+#function for register
+def invalid_username(Email):
+    Email=input("Enter Email ID:")
+    return username(Email)
+
+def username(Email):
+    format=r'\b[A-Za-z0-9./%+-_]+@[a-zA-Z]+.[a-zA-Z]{2,}\b'
+    if (re.fullmatch(format,Email)):
+        return Email
+    else:
+        print("Invalid username")
+        return invalid_username(Email)
+    
+#function for password
+def invalid_password(PW):
+    PW=input("Enter Password :")
+    return password_type(PW)
+
+def password_type(PW):
+    l=0
+    u=0
+    num=0
+    spl=0
+    spl_char="!@#$%^()*/\][{}.,"
+    if len(PW)<=10:
+        for i in PW:
+            if (i.islower()):
+                l+=1
+            if (i.isupper()):
+                u+=1
+            if (i.isdigit()):
+                num+=1
+            if(i in spl_char):
+                spl+=1
+    if((l>=1)and(u>=1)and(num>=1)and(spl>=1) and l+u+num+spl==len(PW)):
+        return PW
+    else:
+        return invalid_password(PW)
+
+#function for registartion
+def register(user_input):
+    Email=input('Email-id:')
+    user_name=username(Email)
+    PW=input("enter password:")
+    strong_password=password_type(PW)
+    file=open("Registration_Login.txt","a")
+    file.write(user_name)
+    file.write(" ")
+    file.write(strong_password)
+    file.write("\n")
+    file.close()
+    print("Registered Successfully")
+
+def retrive_data(Email):
+    file=open("Registration_Login.txt","r")
+    global a
+    l=file.readlines()
+    for i in l:   
+        l1=i.split()
+        if Email in l1:
+            a=i.split(" ")
+            return a
+
+#function for login
+def login(user_input):
+    Email=input('a_Email ID:')
+    username(Email)
+    password=input("Enter Password:")
+    password_type(password)
+    retrive_data(Email)
+
+#forget password
+def forget_password(user_input):
+    Email=input('Email-ID:')
+    username(Email)
+    retrive_data(Email)
+#driver code
+import re
+user_input=input('A:Register B:Login C:forget password')
+if user_input=="A":
+    register(user_input)
+elif user_input=="B":
+    Email=input('a_Email-ID:')
+    username(Email)
+    password=input("Enter Password:")
+    password_type(password)
+    retrive_data(Email)
+    try:
+        N_User=a[0]
+        N_pass=a[1].strip("\n")
+        if Email==N_User and password==N_pass:
+            print("LoggedIn Successfully")
+    except:
+        print("please register")
+        register(user_input)
+elif(user_input=="C"):
+    forget_password(user_input)
+    try:
+        F_User=a[0]
+        F_pass=a[1].strip("\n")
+        print("The password for the username:",F_pass)
+        n=input("you can also provide new password by click 1")
+        if n=="1":
+            password=input("Enter New password:")
+            update_password=password_type(password)
+            file=open("Registration_Login.txt","r")
+            filedata=file.read()
+            filedata=filedata.replace(F_pass,update_password)
+            file=open("Registration_Login.txt","w")
+            file.write(filedata)
+            file.close()
+            print("success\n")
+    except:
+        print("please register")
+        register(user_input)
+else:
+    print('wrong key, Try again!')
